@@ -1,3 +1,7 @@
+// API Configuration
+const API_BASE_URL = 'https://image-compressor-2p4y.onrender.com';
+
+// DOM Elements
 const uploadBox = document.getElementById('uploadBox');
 const fileInput = document.getElementById('fileInput');
 const formatSection = document.getElementById('formatSection');
@@ -74,13 +78,13 @@ downloadBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', resetApp);
 
 function handleFileSelect(file) {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/heif', 'image/heic'];
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.heif', '.heic'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/heif', 'image/heic', 'application/pdf'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.heif', '.heic', '.pdf'];
     
     const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'));
     
     if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-        showError('Please select a valid image file (JPEG, PNG, or HEIF)');
+        showError('Please select a valid image file (JPEG, PNG, HEIF) or PDF');
         return;
     }
     
@@ -95,6 +99,16 @@ function handleFileSelect(file) {
     hideError();
     
     showPreview(file);
+    
+    const isPDF = file.type === 'application/pdf' || fileExtension === '.pdf';
+    
+    if (isPDF) {
+        document.querySelector('.format-buttons').style.display = 'none';
+        document.querySelector('.format-section h3').textContent = 'PDF Compression';
+    } else {
+        document.querySelector('.format-buttons').style.display = 'flex';
+        document.querySelector('.format-section h3').textContent = 'Select Output Format';
+    }
     
     formatSection.style.display = 'block';
 }
@@ -113,22 +127,31 @@ function showPreview(file) {
             '.heic': 'image/heic',
             '.jpg': 'image/jpeg',
             '.jpeg': 'image/jpeg',
-            '.png': 'image/png'
+            '.png': 'image/png',
+            '.pdf': 'application/pdf'
         };
         fileType.textContent = extensionMap[fileExtension] || 'Unknown';
     }
     
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        previewImage.src = e.target.result;
+    const isPDF = file.type === 'application/pdf' || fileExtension === '.pdf';
+    
+    if (isPDF) {
+        previewImage.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23dc3545" width="200" height="200" rx="10"/%3E%3Ctext x="50%25" y="50%25" font-size="80" text-anchor="middle" dy=".3em" fill="white"%3EPDF%3C/text%3E%3C/svg%3E';
+        previewImage.style.objectFit = 'contain';
         previewSection.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+    } else {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            previewSection.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
 }
 
 async function compressImage() {
     if (!selectedFile) {
-        showError('Please select an image first');
+        showError('Please select a file first');
         return;
     }
     
@@ -137,12 +160,15 @@ async function compressImage() {
     
     loader.style.display = 'block';
     
+    const compressionEnabled = document.getElementById('compressionToggle').checked;
+    
     const formData = new FormData();
     formData.append('image', selectedFile);
     formData.append('format', selectedFormat);
+    formData.append('compress', compressionEnabled);
     
     try {
-        const response = await fetch('/api/compress', {
+        const response = await fetch(`${API_BASE_URL}/api/compress`, {
             method: 'POST',
             body: formData
         });
@@ -154,13 +180,13 @@ async function compressImage() {
         if (response.ok && data.success) {
             displayResults(data);
         } else {
-            showError(data.error || 'Failed to compress image');
+            showError(data.error || 'Failed to process file');
         }
         
     } catch (error) {
         loader.style.display = 'none';
         showError('Network error. Please check your connection and try again.');
-        console.error('Compression error:', error);
+        console.error('Processing error:', error);
     }
 }
 
@@ -169,7 +195,7 @@ function displayResults(data) {
     compressedSize.textContent = data.compressedSize;
     savedPercentage.textContent = data.compressionRatio;
     
-    downloadUrl = data.downloadUrl;
+    downloadUrl = `${API_BASE_URL}${data.downloadUrl}`;
     
     resultsSection.style.display = 'block';
     
@@ -188,6 +214,9 @@ function resetApp() {
     resultsSection.style.display = 'none';
     loader.style.display = 'none';
     hideError();
+    
+    document.querySelector('.format-buttons').style.display = 'flex';
+    document.querySelector('.format-section h3').textContent = 'Select Output Format';
     
     formatButtons.forEach(btn => {
         btn.classList.remove('active');
@@ -223,3 +252,4 @@ function formatFileSize(bytes) {
 }
 
 console.log('✅ Image Compressor loaded successfully!');
+console.log('🔗 Connected to backend:', API_BASE_URL);
