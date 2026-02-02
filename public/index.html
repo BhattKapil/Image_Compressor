@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor - Lossless Compression</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🖼️ Image Compressor</h1>
+            <p>Compress images without losing quality</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📁</div>
+                <h3>Drop your image here or click to browse</h3>
+                <p>Supports: JPEG, PNG, HEIF/HEIC (Max 10MB)</p>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg,image/heif,image/heic" hidden>
+            </div>
+            <div class="format-section" id="formatSection" style="display: none;">
+                <h3>Select output format</h3>
+                <div class="format-buttons">
+                    <button class="format-btn active" data-format="jpeg">JPEG</button>
+                    <button class="format-btn" data-format="png">PNG</button>
+                    <button class="format-btn" data-format="heif">HEIF</button>
+                </div>
+                <button class="compress-btn" id="compressBtn">Compress Image</button>
+            </div>
+        </div>
+        <div class="preview-section" id="previewSection" style="display: none;">
+            <h3>Image Preview</h3>
+            <div class="preview-container">
+                <img id="previewImage" src="" alt="Preview">
+                <div class="preview-info">
+                    <p><strong>Filename:</strong> <span id="fileName"></span></p>
+                    <p><strong>Size:</strong> <span id="fileSize"></span></p>
+                    <p><strong>Type:</strong> <span id="fileType"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="loader" id="loader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Compressing your image...</p>
+        </div>
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h3>✅ Compression Complete!</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Original Size</p>
+                    <p class="stat-value" id="originalSize">-</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Compressed Size</p>
+                    <p class="stat-value" id="compressedSize">-</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Space Saved</p>
+                    <p class="stat-value" id="savedPercentage">-</p>
+                </div>
+            </div>
+            <button class="download-btn" id="downloadBtn">Download Compressed Image</button>
+            <button class="reset-btn" id="resetBtn">Compress Another Image</button>
+        </div>
+        <div class="error-message" id="errorMessage" style="display: none;">
+            <p id="errorText"></p>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>Made with ❤️ | Lossless Image Compression</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
