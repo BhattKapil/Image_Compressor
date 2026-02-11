@@ -1,7 +1,8 @@
 // API Configuration
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3000'
-    : 'https://image-compressor-2p4y.onrender.com';
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "";
 
 console.log('✅ Image Compressor loaded successfully!');
 console.log('🔗 Using backend:', API_BASE_URL);

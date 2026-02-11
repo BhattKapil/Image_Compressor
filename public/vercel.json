@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://image-compressor-2p4y.onrender.com/api/:path*"
+    }
+  ]
+}
