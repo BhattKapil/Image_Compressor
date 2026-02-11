@@ -49,9 +49,12 @@ app.use(
     origin: [
       "https://image-compressor-pied-gamma.vercel.app",
       "http://localhost:3000",
-      "http://localhost:5500"
+      "http://localhost:5500",
+      "http://127.0.0.1:3000",
+      "http://localhost:5173" // Add any other ports you use
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
     credentials: true
   })
 );

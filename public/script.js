@@ -1,5 +1,9 @@
 // API Configuration
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : 'https://image-compressor-2p4y.onrender.com';
+
+console.log('🔗 Using backend:', API_BASE_URL);
 
 // DOM Elements
 const uploadBox = document.getElementById("uploadBox");
