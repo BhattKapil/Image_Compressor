@@ -11,22 +11,23 @@ const app = express();
 //
 // ✅ CORS (Allow Vercel + Localhost)
 //
-app.use(
-  cors({
-    origin: [
-      "https://image-compressor-pied-gamma.vercel.app",
-      "http://localhost:3000",
-      "http://localhost:5500",
-      "http://127.0.0.1:3000",
-      "http://localhost:5173" // Add any other ports you use
-    ],
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true
-  })
-);
+app.use(cors({
+  origin: true,
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["*"],
+}));
 
 app.options(/.*/, cors());
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  next();
+});
 
 const PORT = process.env.PORT || 3000;
 
@@ -104,6 +105,8 @@ app.get("/api/health", (req, res) => {
 // ✅ Compression Route
 //
 app.post("/api/compress", upload.single("image"), async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+
   let uploadedPublicId = null;
 
   try {
