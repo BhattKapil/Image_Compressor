@@ -7,6 +7,27 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+
+//
+// ✅ CORS (Allow Vercel + Localhost)
+//
+app.use(
+  cors({
+    origin: [
+      "https://image-compressor-pied-gamma.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5500",
+      "http://127.0.0.1:3000",
+      "http://localhost:5173" // Add any other ports you use
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true
+  })
+);
+
+app.options("*", cors());
+
 const PORT = process.env.PORT || 3000;
 
 //
@@ -41,23 +62,7 @@ async function connectDB() {
 app.use(express.json());
 app.use(express.static("public"));
 
-//
-// ✅ CORS (Allow Vercel + Localhost)
-//
-app.use(
-  cors({
-    origin: [
-      "https://image-compressor-pied-gamma.vercel.app",
-      "http://localhost:3000",
-      "http://localhost:5500",
-      "http://127.0.0.1:3000",
-      "http://localhost:5173" // Add any other ports you use
-    ],
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true
-  })
-);
+
 
 //
 // ✅ Multer Setup with File Validation
